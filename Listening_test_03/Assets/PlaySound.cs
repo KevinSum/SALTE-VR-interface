@@ -114,6 +114,8 @@ public class PlaySound : MonoBehaviour {
             print("ele: " + tracking.ele);
             if (!audio.isPlaying && Mathf.Abs(tracking.ele) < triggerRange) // play audio if no sound is playing and head is at the horizontal position
             {
+                print(Mathf.Abs(tracking.ele));
+                print(triggerRange);
                 // set head anchor (start position)
                 azi_anchor = tracking.azi;
                 ele_anchor = tracking.ele;

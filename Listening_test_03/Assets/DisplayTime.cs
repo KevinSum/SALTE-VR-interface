@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using System;
 using OscJack;
 
-// Display pasted time
+// Previously used to display pasted time. Now used to display instructions
 public class DisplayTime : MonoBehaviour {
     public Text text; // get text component 
     private float timer = 0.0f; // initialise timer to 0 
@@ -24,19 +24,39 @@ public class DisplayTime : MonoBehaviour {
 		// Setup the osc clients 
 		client = new OscClient(IPAddress, oscPortOut);
 
+        /*
         text.text = timeLimitInMin + ":00"; // initialise text
         timer = timeLimitInMin * 60; // change time limit to seconds
+        */
     }
 	
 	// Update is called once per frame
 	void Update () {
-        // start game by triggering the sound
-		if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger) || OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger))
+        // start game 
+        if (OVRInput.GetDown(OVRInput.RawButton.X))
         {
-            gameStarted = true;
-			client.Send ("/lochead/test", "start");
+            if (gameStarted == false)
+            {
+                gameStarted = true;
+                text.enabled = false;
+                text.text = "Look at horizon and press X when ready for next trial";
+                client.Send("/lochead/test", "start");
+            }
+            else if (gameStarted == true) {
+             
+                text.enabled = false;
+            }
+
+
         }
+
+        if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger) || OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger))
+        {
+            text.enabled = true;
+        }
+
         // count down
+        /*
         if (gameStarted == true)
         {
             timer = timer - Time.deltaTime; // count time
@@ -55,5 +75,6 @@ public class DisplayTime : MonoBehaviour {
             gameOver = true; // game over
 			client.Send ("/lochead/test", "end");
         }
+        */
     }
 }

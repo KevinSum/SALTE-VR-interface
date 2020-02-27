@@ -89,6 +89,7 @@ public class TriggerPrint : MonoBehaviour {
                 File.AppendAllText(path, "Paused," + System.DateTime.Now.TimeOfDay + "," + "\n");
             }
         }
+
         // write the final score to the csv file when the game is over
         if (timer.gameOver == true && print_gameover == false)
         {

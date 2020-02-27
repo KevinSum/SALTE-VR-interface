@@ -16,7 +16,7 @@ public class TriggerParticle : MonoBehaviour {
     OSCData player;  // call OSCData script in CenterEyeAnchor
     [HideInInspector]
     GameObject TimeDisplay;
-    DisplayTime timer; // call DisplayTime script in TimeDisplay
+    DisplayTime timer;  // call the DisplayTime script in TimeDisplay
 
     // Use this for initialization
     void Start () {

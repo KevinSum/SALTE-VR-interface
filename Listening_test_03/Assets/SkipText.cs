@@ -20,7 +20,7 @@ public class SkipText : MonoBehaviour {
     PauseGame PauseScript;  // call PaseGame script in Pause object
     [HideInInspector]
     GameObject TimeDisplay;
-    DisplayTime timer; // call DisplayTime script in TimeDisplay
+    DisplayTime timer;  // call the DisplayTime script in TimeDisplay
 
     // Use this for initialization
     void Start () 
@@ -41,6 +41,7 @@ public class SkipText : MonoBehaviour {
 
 	void Update()
 	{
+        /*
 		if (PauseScript.Paused == false && timer.gameStarted == true) 
 		{
 			if (OVRInput.GetDown (OVRInput.Button.One) || OVRInput.GetDown (OVRInput.Button.Three)) 
@@ -50,6 +51,7 @@ public class SkipText : MonoBehaviour {
 				client.Send ("/lochead/test", "skip");
 			}
 		}
+        */
 	}
 
     // show message and disable it after certain amount of time (TextDuration)

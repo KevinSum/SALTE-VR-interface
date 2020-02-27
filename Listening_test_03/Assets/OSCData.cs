@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using OscJack;
 
 // send OSC data to Max patch (note: send only, recieve in "Print" script)
 public class OSCData : MonoBehaviour {
     // initialise OSC
-    public OSC osc;
+    public OSC osc; // Needed?
+    OscClient client;
+    public string IPAddress = "127.0.0.1";
+    public int MainOutPort = 9001;
 
     [HideInInspector]
     public float azi_anchor = 0.0f; // azimuth anchor, the azimuth angle when the sample start playing
@@ -53,6 +57,8 @@ public class OSCData : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        // Finds and loads in OSC settings
+        client = new OscClient(IPAddress, MainOutPort);
         // locate PauseGame script
         Pause = GameObject.Find("Pause");
         PauseScript = Pause.GetComponent<PauseGame>();
@@ -101,8 +107,8 @@ public class OSCData : MonoBehaviour {
             osc.Send(message);
         }
 
-        // trigger sound (when main trigger is pressed and the head is in the tolerance range)
-        if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger) && Mathf.Abs(tracker.ele) < triggerRange && save_state == false)
+        // trigger sound (when X button is pressed and the head is in the tolerance range)
+        if (OVRInput.GetDown(OVRInput.RawButton.X) && Mathf.Abs(tracker.ele) < triggerRange && save_state == false)
         {
             // set head anchor (start position)
             azi_anchor = tracker.azi;
@@ -163,7 +169,8 @@ public class OSCData : MonoBehaviour {
             }
 
             // if user is not sure and want to skip the sample
-            if (OVRInput.GetDown(OVRInput.Button.One) || OVRInput.GetDown(OVRInput.Button.Three))
+            /*
+            if (OVRInput.GetDown(OVRInput.Button.One))
             {
                 triggerPrint.saveNan(); // save response to the trigger CSV file
                 //skipEffect.EffectStart(); // start skip effect
@@ -173,6 +180,7 @@ public class OSCData : MonoBehaviour {
                 NextSample(); // append next sample
                 save_state = false; // change save state to pause (so user can not save more than 1 time with the same sample)
             }
+            */
         }
         else
         {
@@ -183,8 +191,8 @@ public class OSCData : MonoBehaviour {
         // when user tries to pause (by pressing the start button)
         if (OVRInput.GetDown(OVRInput.Button.Start))
         {
-            NextSample(); // append next sample (so the user can not listening to the same sample more than 1 time)
-            save_state = false;
+            //NextSample(); // append next sample (so the user can not listening to the same sample more than 1 time)
+            //save_state = false;
         }
 
         // when game is over, mute the sound
@@ -262,6 +270,9 @@ public class OSCData : MonoBehaviour {
         message.address = "/BangHRTF"; // OSC filter tag
         message.values.Add(1); //OSC message
         osc.Send(message);
+
+        Debug.Log("We here kids");
+        client.Send("/nextSample", "next");
     }
 
 }

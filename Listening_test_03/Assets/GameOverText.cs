@@ -9,7 +9,7 @@ public class GameOverText : MonoBehaviour {
     public Text text; // call for Text component in the current game object (make sure to drag to link the text component in the inspector)
     [HideInInspector]
     GameObject TimeDisplay;
-    DisplayTime timer;  // call DisplayTime script in TimeDisplay
+    DisplayTime timer;  // call the DisplayTime script in TimeDisplay
 
     // Use this for initialization
     void Start () {

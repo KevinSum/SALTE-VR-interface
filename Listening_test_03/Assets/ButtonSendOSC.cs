@@ -26,9 +26,6 @@ public class ButtonSendOSC : MonoBehaviour
 	GameObject Pause;
 	PauseGame pauseGame; // call PauseGame script in Pause
 	[HideInInspector]
-	GameObject TimeDisplay;
-	DisplayTime timer; // call DisplayTime script in Time Display
-	[HideInInspector]
 	GameObject EnergyExplosion;
 	TriggerParticle particleEffect; // call TriggerParticle script in EnergyExplosion
 
@@ -40,9 +37,6 @@ public class ButtonSendOSC : MonoBehaviour
 
 		Pause = GameObject.Find("Pause");
 		pauseGame = Pause.GetComponent<PauseGame>();
-		// locate DisplayTime script
-		TimeDisplay = GameObject.Find("TimeDisplay");
-		timer = TimeDisplay.GetComponent<DisplayTime>();
 		EnergyExplosion = GameObject.Find("EnergyExplosion");
 		particleEffect = EnergyExplosion.GetComponent<TriggerParticle>();
 
@@ -60,7 +54,7 @@ public class ButtonSendOSC : MonoBehaviour
 	{
 		//print (pauseGame.Paused);
 		//print(timer.gameOver);
-		if (pauseGame.Paused == false && timer.gameOver == false) 
+		if (pauseGame.Paused == false) 
 		{
 			if (OVRInput.GetDown (OVRInput.Button.PrimaryIndexTrigger) || OVRInput.GetDown (OVRInput.Button.SecondaryIndexTrigger)) 
 			{
