@@ -124,6 +124,8 @@ public class OSCData : MonoBehaviour {
             message.values.Add(0); // OSC message
             osc.Send(message);
 
+            client.Send("/StopPlayback");
+
             save_state = true;
         }
 
@@ -271,7 +273,6 @@ public class OSCData : MonoBehaviour {
         message.values.Add(1); //OSC message
         osc.Send(message);
 
-        Debug.Log("We here kids");
         client.Send("/nextSample", "next");
     }
 

@@ -14,8 +14,14 @@ public class DisplayTime : MonoBehaviour {
     public bool gameStarted = false; // initialise game start state
     [HideInInspector]
     public bool gameOver = false; // initialise gmae over state
+    [HideInInspector]
+    GameObject CenterEyeAnchor; // call Print script
+    [HideInInspector]
+    Print tracker; // call Print script
+    [HideInInspector]
+    OSCData OSCData; // call Print script
 
-	public string IPAddress = "127.0.0.1"; // IP address for OSC 
+    public string IPAddress = "127.0.0.1"; // IP address for OSC 
 	public int oscPortOut = 9001; // Port for OSC out
 	OscClient client;
 
@@ -23,6 +29,12 @@ public class DisplayTime : MonoBehaviour {
     void Start () {
 		// Setup the osc clients 
 		client = new OscClient(IPAddress, oscPortOut);
+
+        // locate OSCData script
+        CenterEyeAnchor = GameObject.Find("CenterEyeAnchor");
+        OSCData = CenterEyeAnchor.GetComponent<OSCData>();
+        // locate Print script
+        tracker = CenterEyeAnchor.GetComponent<Print>();
 
         /*
         text.text = timeLimitInMin + ":00"; // initialise text
@@ -33,7 +45,7 @@ public class DisplayTime : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         // start game 
-        if (OVRInput.GetDown(OVRInput.RawButton.X))
+        if (OVRInput.GetDown(OVRInput.RawButton.X) && Mathf.Abs(tracker.ele) < OSCData.triggerRange && OSCData.save_state == false)
         {
             if (gameStarted == false)
             {
