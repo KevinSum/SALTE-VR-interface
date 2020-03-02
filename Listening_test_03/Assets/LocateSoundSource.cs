@@ -32,9 +32,9 @@ public class LocateSoundSource : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
-        azi_rela = player.targetAzimuth; // declare azi_rela as sound source azimuth angle
-        ele_rela = player.targetElevation; // declare ele_rela as sound source elevation angle
+        // Find relative angle (from start to end position) for analysis later
+        azi_rela = player.targetAzimuth; // declare azi_rela as sound source azimuth angle 
+        ele_rela = player.targetElevation; // declare ele_rela as sound source elevation angle 
         // change the azimuth angle form between -180 and 180, to between 0 -360
         if (azi_rela >= 0)
         {
@@ -44,13 +44,14 @@ public class LocateSoundSource : MonoBehaviour {
         {
             azi_rela = azi_rela + 360;
         }
-        // add the anchor angle (anchor is the player start position when trigger a sample so the start postion is always 0)
+        // add the anchor angle (anchor is the player start position when trigger a sample so the start postion is always 0) 
         azi_rela = (azi_rela + player.azi_anchor) % 360;
         ele_rela = (ele_rela + player.ele_anchor) % 360;
 
         // convert angle form degree to radian
-        azi_rad = azi_rela * Mathf.Deg2Rad;
-        ele_rad = ele_rela * Mathf.Deg2Rad;
+        azi_rad = player.targetAzimuth * Mathf.Deg2Rad;
+        ele_rad = player.targetElevation * Mathf.Deg2Rad;
+
         // convert angle to cartiesian vector
         Vector3 Cart = SphericalToCartesian(5, azi_rad, ele_rad);
         // add the sound source cartiesian vector to the player current position, which will be the sound source position in the game

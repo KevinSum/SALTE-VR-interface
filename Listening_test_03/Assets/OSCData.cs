@@ -7,7 +7,8 @@ using OscJack;
 // send OSC data to Max patch (note: send only, recieve in "Print" script)
 public class OSCData : MonoBehaviour {
     // initialise OSC
-    public OSC osc; // Needed?
+    //public OSC osc; // Needed?
+    OscServer server;
     OscClient client;
     public string IPAddress = "127.0.0.1";
     public int MainOutPort = 9001;
@@ -80,6 +81,15 @@ public class OSCData : MonoBehaviour {
         // locate Print script
         tracker = GetComponent<Print>();
 
+        var server = new OscServer(8999);
+
+        server.MessageDispatcher.AddCallback(
+            "/test", // OSC address
+            (string address, OscDataHandle data) => {
+                particleEffect.EffectStart(); // start particle effect
+            }
+        );
+
         // trigger next sample
         NextSample();
 
@@ -97,14 +107,14 @@ public class OSCData : MonoBehaviour {
             message = new OscMessage();
             message.address = "/StartTrig"; // OSC filter tag
             message.values.Add(1); // OSC message
-            osc.Send(message);
+            //osc.Send(message);
         }
         else
         {
             message = new OscMessage();
             message.address = "/StartTrig"; // OSC filter tag
             message.values.Add(0); // OSC message
-            osc.Send(message);
+            //osc.Send(message);
         }
 
         // trigger sound (when X button is pressed and the head is in the tolerance range)
@@ -115,16 +125,44 @@ public class OSCData : MonoBehaviour {
             ele_anchor = tracker.ele;
             //print(azi_anchor);
 
+            // get target azimuth angle
+            if (TargetAzimuthArray.Length == 0) // if the array size is 0
+            {
+                do
+                {
+                    targetAzimuth = Random.Range(-180, 180); // random angle between -180 and 180
+                }
+                while (Mathf.Abs(targetAzimuth - azi_anchor) < 50); // Make sure new position is outside of view
+                
+            }
+            else
+            {
+                // random select angle in the array
+                int idx = Random.Range(1, TargetAzimuthArray.Length); // random select a index within the size of the array
+                targetAzimuth = TargetAzimuthArray[idx]; // get the angle by the random index
+            }
+
+            // get target elevation angle
+            if (TargetElevationArray.Length == 0) // if the array size is 0
+            {
+                targetElevation = Random.Range(-60, 60); // random angle between -60 and 60
+            }
+            else
+            {
+                // random select angle in the array
+                int idx = Random.Range(1, TargetElevationArray.Length); // random select a index within the size of the array
+                targetElevation = TargetElevationArray[idx]; // get the angle by the random index
+            }
+            print("target azi: " + targetAzimuth + " | target ele: " + targetElevation); // print target azimuth and elevation angle
+
+            // Change sound source position
+            client.Send("/changeSoundPos", targetAzimuth, targetElevation);
+
             // set start time
             start_time = Time.time;
 
-            // trigger sound (unmute sound)
-            message = new OscMessage();
-            message.address = "/SoundTrig"; // OSC filter tag
-            message.values.Add(0); // OSC message
-            osc.Send(message);
-
-            client.Send("/StopPlayback");
+            // Start sound playback
+            client.Send("/startPlayback");
 
             save_state = true;
         }
@@ -148,12 +186,12 @@ public class OSCData : MonoBehaviour {
         message = new OscMessage();
         message.address = "/Azi"; // OSC filter tag
         message.values.Add(azi_rela); // OSC message
-        osc.Send(message);
+        //osc.Send(message);
 
         message = new OscMessage();
         message.address = "/Ele"; // OSC filter tag
         message.values.Add(ele_rela); // OSC message
-        osc.Send(message);
+        //osc.Send(message);
 
         // if gmae not paused, save state is true (sample have been played and ready to save) and game is not over
         if (PauseScript.Paused == false && save_state == true && timer.gameOver == false) 
@@ -172,7 +210,7 @@ public class OSCData : MonoBehaviour {
 
             // if user is not sure and want to skip the sample
             /*
-            if (OVRInput.GetDown(OVRInput.Button.One))
+            if (OVRInput.GetDown(OVRInput.Button.One))z
             {
                 triggerPrint.saveNan(); // save response to the trigger CSV file
                 //skipEffect.EffectStart(); // start skip effect
@@ -203,7 +241,7 @@ public class OSCData : MonoBehaviour {
             message = new OscMessage(); 
             message.address = "/SoundTrig"; // OSC filter tag
             message.values.Add(1); // OSC message
-            osc.Send(message);
+            //osc.Send(message);
             save_state = false;
         }
     }
@@ -215,65 +253,23 @@ public class OSCData : MonoBehaviour {
         message = new OscMessage();
         message.address = "/SoundTrig"; // OSC filter tag
         message.values.Add(1); // OSC message
-        osc.Send(message);
+        //osc.Send(message);
         // turn off dac
         message = new OscMessage();
         message.address = "/StartTrig"; // OSc filter tag
         message.values.Add(0); // OSc message
-        osc.Send(message);
+        //osc.Send(message);
     }
 
     // append next sample 
     void NextSample()
     {
         // stop sound (mute sound)
-        message = new OscMessage();
-        message.address = "/SoundTrig"; // OSC filter tag
-        message.values.Add(1); // OSC message
-        osc.Send(message);
+        client.Send("/StopPlayback");
 
-        // get target azimuth angle
-        if (TargetAzimuthArray.Length == 0) // if the array size is 0
-        {
-            targetAzimuth = Random.Range(-180, 180); // random angle between -180 and 180
-        }
-        else
-        {
-            // random select angle in the array
-            int idx = Random.Range(1, TargetAzimuthArray.Length); // random select a index within the size of the array
-            targetAzimuth = TargetAzimuthArray[idx]; // get the angle by the random index
-        }
+        // send target data and load new HRTF
+        client.Send("/loadNextSample");
 
-        // get target elevation angle
-        if (TargetElevationArray.Length == 0) // if the array size is 0
-        {
-            targetElevation = Random.Range(-60, 60); // random angle between -60 and 60
-        }
-        else
-        {
-            // random select angle in the array
-            int idx = Random.Range(1, TargetElevationArray.Length); // random select a index within the size of the array
-            targetElevation = TargetElevationArray[idx]; // get the angle by the random index
-        }
-        print("target azi: " + targetAzimuth + " | target ele: " + targetElevation); // print target azimuth and elevation angle
-
-        // send target azimuth angle
-        message = new OscMessage();
-        message.address = "/TarAzi"; // OSC filter tag
-        message.values.Add(targetAzimuth); //OSC message
-        osc.Send(message);
-        // send target elevation angle
-        message = new OscMessage();
-        message.address = "/TarEle"; // OSC filter tag
-        message.values.Add(targetElevation); //OSC message
-        osc.Send(message);
-        // trigger new HRTF
-        message = new OscMessage();
-        message.address = "/BangHRTF"; // OSC filter tag
-        message.values.Add(1); //OSC message
-        osc.Send(message);
-
-        client.Send("/nextSample", "next");
     }
 
 }

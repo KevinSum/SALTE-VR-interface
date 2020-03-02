@@ -31,6 +31,7 @@ public class Print : MonoBehaviour {
     private bool print_gameover = false;
     private string backup_path = "C:/Users/Benjamin/Google Drive/Listening_Test_Results";
 
+    OscServer server;
     OSCData oscData;
     [HideInInspector]
     GameObject Pause;
@@ -106,10 +107,10 @@ public class Print : MonoBehaviour {
         StartCoroutine(PrintData());
 
         //initialise OSC server (recieve only)
-        var server = new OscServer(9001); // Port number
+        var server = new OscServer(8999); // Port number
         // start OSC server, and filer OSC recieve data
         server.MessageDispatcher.AddCallback(
-            "/SOFAName", // OSC address
+            "/HRTF_name", // OSC address
             (string address, OscDataHandle data) => {
                 SOFAName = string.Format(data.GetElementAsString(0));
                 print(string.Format(data.GetElementAsString(0)));
@@ -184,7 +185,14 @@ public class Print : MonoBehaviour {
             }
 
             // euler's angle y
-            azi = transform.eulerAngles.y;
+            if (transform.eulerAngles.y <= 180)
+            {
+                azi = transform.eulerAngles.y;
+            }
+            else
+            {
+                azi = transform.eulerAngles.y - 360;
+            }
 
             //euler's angle z
             euler_z = transform.eulerAngles.z;
