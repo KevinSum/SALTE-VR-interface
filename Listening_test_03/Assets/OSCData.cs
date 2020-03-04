@@ -32,6 +32,9 @@ public class OSCData : MonoBehaviour {
     public float targetElevation; // target elvation angle
     [HideInInspector]
     public float start_time = 0.0f; // initailise start time
+    public bool soundSourceVisTemp; // Temporary visibility of source (i.e Setting source visibility in between triggers)
+    public bool soundSourceVis; // Set visiblilty of source source for entire test
+
 
     private OscMessage message = new OscMessage(); // initialise OscMessage
 
@@ -155,6 +158,12 @@ public class OSCData : MonoBehaviour {
             }
             print("target azi: " + targetAzimuth + " | target ele: " + targetElevation); // print target azimuth and elevation angle
 
+            // Set sound source visibility
+            if (soundSourceVis == true)
+            {
+                soundSourceVisTemp = true;
+            }
+
             // Change sound source position
             client.Send("/changeSoundPos", targetAzimuth, targetElevation);
 
@@ -203,6 +212,12 @@ public class OSCData : MonoBehaviour {
                 particleEffect.EffectStart(); // start particle effect
                 showScore.updateSocre(); // update score
                 tracker.index_trigger_idx = 1; // change index trigger press indicator
+
+                // set source source visibility
+                if (soundSourceVis == true)
+                {
+                    soundSourceVisTemp = false;
+                }
 
                 NextSample(); // append next sample
                 save_state = false; // change save state to pause (so user can not save more than 1 time with the same sample)

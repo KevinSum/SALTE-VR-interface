@@ -14,6 +14,8 @@ public class LocateSoundSource : MonoBehaviour {
     public float ele_rela;
 
     [HideInInspector]
+    GameObject SoundSource;
+    [HideInInspector]
     GameObject CenterEyeAnchor;
     OSCData player;  // call the OSCData script (to get the angle of the sound source)
     [HideInInspector]
@@ -22,6 +24,8 @@ public class LocateSoundSource : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        // find SourceSource object
+        SoundSource = GameObject.Find("SoundSource"); 
         // find ODC Data script
         CenterEyeAnchor = GameObject.Find("CenterEyeAnchor");
         player = CenterEyeAnchor.GetComponent<OSCData>();
@@ -32,6 +36,14 @@ public class LocateSoundSource : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        // Change visibility of sound source to player
+        if (player.soundSourceVisTemp == true)
+        {
+            SoundSource.layer = 0;
+        } else {
+            SoundSource.layer = 1;
+        }
+
         // Find relative angle (from start to end position) for analysis later
         azi_rela = player.targetAzimuth; // declare azi_rela as sound source azimuth angle 
         ele_rela = player.targetElevation; // declare ele_rela as sound source elevation angle 
