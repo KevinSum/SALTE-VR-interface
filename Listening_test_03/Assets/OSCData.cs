@@ -26,12 +26,15 @@ public class OSCData : MonoBehaviour {
     public int triggerRange; // trigger range (the vertial tolerance of head pointing position to trigger the sample)
     public float[] TargetAzimuthArray; // list of target azimuth angle (completly random between -180 to 180 when the array size is 0)
     public float[] TargetElevationArray; // list of target azimuth angle (completly random between -60 to 60 when the array size is 0)
-    [HideInInspector]
+
+    //[HideInInspector]
     public float targetAzimuth; // target azimuth angle
-    [HideInInspector]
+    //[HideInInspector]
     public float targetElevation; // target elvation angle
+
     [HideInInspector]
     public float start_time = 0.0f; // initailise start time
+    [HideInInspector]
     public bool soundSourceVisTemp; // Temporary visibility of source (i.e Setting source visibility in between triggers)
     public bool soundSourceVis; // Set visiblilty of source source for entire test
 

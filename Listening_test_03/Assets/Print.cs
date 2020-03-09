@@ -6,6 +6,7 @@ using System.IO;
 using UnityEngine.Events;
 using OscJack;
 using UnityEditor;
+using System;
 
 // Write user's tracking data to a csv file
 public class Print : MonoBehaviour {
@@ -28,6 +29,8 @@ public class Print : MonoBehaviour {
     [HideInInspector]
     public int nan_trigger_idx = 0; // nan trigger press indicator
     public string SOFAName;
+    public string comment;
+    public bool logData = false;
     private bool print_gameover = false;
     private string backup_path = "C:/Users/Benjamin/Google Drive/Listening_Test_Results";
 
@@ -114,6 +117,20 @@ public class Print : MonoBehaviour {
             (string address, OscDataHandle data) => {
                 SOFAName = string.Format(data.GetElementAsString(0));
                 print(string.Format(data.GetElementAsString(0)));
+            }
+        );
+
+        server.MessageDispatcher.AddCallback(
+            "/LogData", // OSC address
+            (string address, OscDataHandle data) => {
+                logData = Convert.ToBoolean(data.GetElementAsInt(0));
+            }
+        );
+
+        server.MessageDispatcher.AddCallback(
+            "/Comment", // OSC address
+            (string address, OscDataHandle data) => {
+                comment = string.Format(data.GetElementAsString(0));
             }
         );
 

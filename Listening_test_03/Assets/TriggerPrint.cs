@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using UnityEditor;
+using OscJack;
 
 // Write user's responses to a CSV file by oculus rift left hand trigger
 public class TriggerPrint : MonoBehaviour {
@@ -17,6 +18,7 @@ public class TriggerPrint : MonoBehaviour {
     private bool print_gameover = false;
     private string backup_path = "C:/Users/Benjamin/Google Drive/Listening_Test_Results";
 
+    OscServer server;
     [HideInInspector]
     GameObject Canvas; 
     DistanceControl dist_resp; // call the dist_resp script in Canvas
@@ -69,6 +71,7 @@ public class TriggerPrint : MonoBehaviour {
 
         // initalise file
         CreateTest();
+
     }
 
     // Update is called once per frame
@@ -126,7 +129,7 @@ public class TriggerPrint : MonoBehaviour {
         string content = "\n- Login date: " + System.DateTime.Now + "\n";
         string header = "count," + "time," + "rela.azi," + "rela.ele," + "resp.dist," + "HRTF.file," + "tar.azi," + "tar.ele," + "resp.time," + "time.passed,"
             + "sound.type," + "start.azi," + "start.ele," + "real.azi," + "real.ele," + "real.z," + "real.tar.azi," + "real.tar.ele," + "azi.err," + "ele.err," + 
-            "azi.score(max100)," + "ele.score(max80)," + "OA.score(max128)," + "\n";
+            "azi.score(max100)," + "ele.score(max80)," + "OA.score(max128)," + "Comment" +  "\n";
 
         //Add the strings into the file
         File.AppendAllText(path, content);
@@ -169,7 +172,7 @@ public class TriggerPrint : MonoBehaviour {
         // calcute overall score with educian distance
         overall_score = Mathf.Sqrt((azi_score * azi_score) + (ele_score * ele_score));
 
-        if (player.save_state == true) // if save state is true (audio have been played)
+        if (player.save_state == true && tracking.logData == true) // if save state is true (audio have been played)
         {
             // write reponse data to file
             File.AppendAllText(path, counter + "," + System.DateTime.Now.TimeOfDay + "," +
@@ -177,7 +180,7 @@ public class TriggerPrint : MonoBehaviour {
                 player.targetAzimuth + "," + player.targetElevation + "," + resp_time + "," + Time.time + "," +
                 "Pink Noise" + "," + player.azi_anchor + "," + player.ele_anchor + "," + tracking.azi + "," + tracking.ele + "," + tracking.euler_z + "," +
                 locateSoundSource.azi_rela + "," + locateSoundSource.ele_rela + "," + azi_err + ", " + ele_err + "," + azi_score + "," + ele_score + "," + 
-                overall_score + "," + "\n");
+                overall_score + tracking.comment + "," + "\n");
 
             // haptics feedback
             OVRHapticsClip hapticsClip = new OVRHapticsClip(hapticAudioClip);
@@ -186,9 +189,11 @@ public class TriggerPrint : MonoBehaviour {
             // print score
             print("score: " + overall_score);
             print("total score: " + showScore.score);
+
+            counter += 1; // sample count
         }
 
-        counter += 1; // sample count
+ 
     }
 
     // write Nan respone to the csv file (called in OSCData)
@@ -211,7 +216,7 @@ public class TriggerPrint : MonoBehaviour {
                 player.targetAzimuth + "," + player.targetElevation + "," + resp_time + "," + Time.time + "," +
                 "Pink Noise" + "," + player.azi_anchor + "," + player.ele_anchor + "," + tracking.azi + "," + tracking.ele + "," + tracking.euler_z + "," +
                 locateSoundSource.azi_rela + "," + locateSoundSource.ele_rela + "," + "nan" + ", " + "nan" + "," + azi_score + "," + ele_score + "," + 
-                overall_score + "," + "\n");
+                overall_score + "," + tracking.comment + "," + "\n");
 
             // print score
             print("score: " + overall_score);
