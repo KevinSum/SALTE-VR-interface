@@ -129,7 +129,7 @@ public class TriggerPrint : MonoBehaviour {
         string content = "\n- Login date: " + System.DateTime.Now + "\n";
         string header = "count," + "time," + "rela.azi," + "rela.ele," + "resp.dist," + "HRTF.file," + "tar.azi," + "tar.ele," + "resp.time," + "time.passed,"
             + "sound.type," + "start.azi," + "start.ele," + "real.azi," + "real.ele," + "real.z," + "real.tar.azi," + "real.tar.ele," + "azi.err," + "ele.err," + 
-            "azi.score(max100)," + "ele.score(max80)," + "OA.score(max128)," + "Comment" +  "\n";
+            "azi.score(max100)," + "ele.score(max80)," + "OA.score(max128)," + "Comment" + "Sound Source Visibility" + "\n";
 
         //Add the strings into the file
         File.AppendAllText(path, content);
@@ -180,7 +180,7 @@ public class TriggerPrint : MonoBehaviour {
                 player.targetAzimuth + "," + player.targetElevation + "," + resp_time + "," + Time.time + "," +
                 "Pink Noise" + "," + player.azi_anchor + "," + player.ele_anchor + "," + tracking.azi + "," + tracking.ele + "," + tracking.euler_z + "," +
                 locateSoundSource.azi_rela + "," + locateSoundSource.ele_rela + "," + azi_err + ", " + ele_err + "," + azi_score + "," + ele_score + "," + 
-                overall_score + tracking.comment + "," + "\n");
+                overall_score + "," + tracking.comment + "," + player.soundSourceVis + "," + "\n");
 
             // haptics feedback
             OVRHapticsClip hapticsClip = new OVRHapticsClip(hapticAudioClip);

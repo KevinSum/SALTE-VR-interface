@@ -11319,7 +11319,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fa52fc7b1c3f374fa149f95ad3e5801, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  subjectName: Gavin
+  subjectName: 208316
   fileName: 
   azi_score: 0
   ele_score: 0
@@ -11838,7 +11838,7 @@ MonoBehaviour:
   targetElevation: 0
   start_time: 0
   soundSourceVisTemp: 0
-  soundSourceVis: 0
+  soundSourceVis: 1
 --- !u!1 &1188547164
 GameObject:
   m_ObjectHideFlags: 0

@@ -49,7 +49,7 @@ public class headTracker_Export : MonoBehaviour
 
 			if (standard)
 			{
-				client.Send("/rendering/htrpy", transform.localEulerAngles.z, transform.eulerAngles.x, transform.eulerAngles.y);
+				client.Send("/rendering/htrpy", transform.localEulerAngles.z, transform.localEulerAngles.x, transform.localEulerAngles.y);
 			}
 
 			if (RollPitchYaw)
