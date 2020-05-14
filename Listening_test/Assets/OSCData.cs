@@ -107,22 +107,6 @@ public class OSCData : MonoBehaviour {
     // Update is called once per frame
     void Update () {
 
-        // start dac in Max when the game start
-        if (timer.gameStarted == true)
-        {
-            message = new OscMessage();
-            message.address = "/StartTrig"; // OSC filter tag
-            message.values.Add(1); // OSC message
-            //osc.Send(message);
-        }
-        else
-        {
-            message = new OscMessage();
-            message.address = "/StartTrig"; // OSC filter tag
-            message.values.Add(0); // OSC message
-            //osc.Send(message);
-        }
-
         // trigger sound (when X button is pressed and the head is in the tolerance range)
         if (OVRInput.GetDown(OVRInput.RawButton.X) && Mathf.Abs(tracker.ele) < triggerRange && save_state == false)
         {
@@ -194,17 +178,6 @@ public class OSCData : MonoBehaviour {
         // (Debug) print head angle after conversion
         //print("azi_rela: " + azi_rela + " | ele_rela: " + ele_rela);
 
-        // send OSC message
-        message = new OscMessage();
-        message.address = "/Azi"; // OSC filter tag
-        message.values.Add(azi_rela); // OSC message
-        //osc.Send(message);
-
-        message = new OscMessage();
-        message.address = "/Ele"; // OSC filter tag
-        message.values.Add(ele_rela); // OSC message
-        //osc.Send(message);
-
         // if gmae not paused, save state is true (sample have been played and ready to save) and game is not over
         if (PauseScript.Paused == false && save_state == true && timer.gameOver == false) 
         {
@@ -252,31 +225,11 @@ public class OSCData : MonoBehaviour {
             //NextSample(); // append next sample (so the user can not listening to the same sample more than 1 time)
             //save_state = false;
         }
-
-        // when game is over, mute the sound
-        if (timer.gameOver == true)
-        {
-            message = new OscMessage(); 
-            message.address = "/SoundTrig"; // OSC filter tag
-            message.values.Add(1); // OSC message
-            //osc.Send(message);
-            save_state = false;
-        }
     }
 
     // mute sound and turn off dac when quit gmae 
     private void OnApplicationQuit()
     {
-        // mute sound
-        message = new OscMessage();
-        message.address = "/SoundTrig"; // OSC filter tag
-        message.values.Add(1); // OSC message
-        //osc.Send(message);
-        // turn off dac
-        message = new OscMessage();
-        message.address = "/StartTrig"; // OSc filter tag
-        message.values.Add(0); // OSc message
-        //osc.Send(message);
     }
 
     // append next sample 
